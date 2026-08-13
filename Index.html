@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Cuánto me amas?</title>
+    <!-- Importando una fuente hermosa y dramática para el mensaje de error -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --pink-light: #ffe6ea;
+            --pink-medium: #ffb3c1;
+            --pink-dark: #ff85a2;
+            --text-color: #5d5d5d;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--pink-light);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            border: 4px solid var(--pink-medium);
+        }
+
+        h1, h2 {
+            margin-bottom: 20px;
+            color: var(--pink-dark);
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .btn {
+            background-color: var(--pink-medium);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            font-family: inherit;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+
+        .btn:hover {
+            background-color: var(--pink-dark);
+            transform: translateY(-3px);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Ocultar secciones por defecto */
+        #error-screen, #final-screen, #welcome-screen {
+            display: none;
+        }
+
+        /* ESTILOS NUEVOS PARA EL TEXTO DRAMÁTICO */
+        .dramatic-text {
+            font-family: 'Dancing Script', cursive;
+            color: #ff4d6d;
+            font-size: 3.5rem;
+            margin: 40px 0;
+            line-height: 1.2;
+            text-shadow: 2px 2px 0px var(--pink-light), 4px 4px 0px var(--pink-medium);
+            transform: rotate(-3deg);
+            display: inline-block;
+            animation: latido 1.5s infinite;
+        }
+
+        /* Pequeña animación para que se vea más dramático */
+        @keyframes latido {
+            0% { transform: rotate(-3deg) scale(1); }
+            50% { transform: rotate(-3deg) scale(1.05); }
+            100% { transform: rotate(-3deg) scale(1); }
+        }
+
+        /* Pantalla final */
+        #final-screen p {
+            font-size: 1.4rem;
+        }
+
+        /* Decoración de corazones */
+        .hearts {
+            color: var(--pink-dark);
+            font-size: 2rem;
+            margin: 10px 0;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Pantalla de Bienvenida -->
+        <div id="welcome-screen" style="display: block;">
+            <div class="hearts">❤️❤️❤️</div>
+            <h2>Hola mi amor ❤️</h2>
+            <p>He preparado un pequeño cuestionario para medir la pureza de tu amor por mí. ¿Estás lista para demostrarlo?</p>
+            <button class="btn" onclick="startQuiz()">¡Sí, nací lista! 💪</button>
+        </div>
+
+        <!-- Pantalla de Preguntas -->
+        <div id="quiz-screen">
+            <h2 id="question-number">Pregunta 1</h2>
+            <p id="question-text"></p>
+            <div class="options-container">
+                <button class="btn" id="option1" onclick="checkAnswer(this)"></button>
+                <button class="btn" id="option2" onclick="checkAnswer(this)"></button>
+            </div>
+        </div>
+
+        <!-- Pantalla de Error (Solo tipografía dramática) -->
+        <div id="error-screen">
+            <!-- Aquí está el nuevo texto con la tipografía bonita -->
+            <div class="dramatic-text">¡Viste que no me amas! 💔</div>
+            
+            <p>Me has roto el corazón... pero te doy una oportunidad para rectificar.</p>
+            <button class="btn" onclick="retryQuestion()">Perdón 🥺</button>
+        </div>
+
+        <!-- Pantalla Final -->
+        <div id="final-screen">
+            <div class="hearts">👑🏆🥇❤️</div>
+            <h2>¡FELICITACIONES!</h2>
+            <p>Has superado el examen de amor con una puntuación perfecta (después de algunos 'perdón', seguramente 😏).</p>
+            <p>Queda oficialmente demostrado que soy el mejor novio del universo mundial y que me amas más que a nada.</p>
+            <p>❤️¡Te amo!❤️</p>
+            <p>Puedes reclamar tu premio (un beso enorme y un abrazo) cuando me veas. 😊</p>
+        </div>
+    </div>
+
+    <script>
+        const questionsData = [
+            { q: "¿Me amas más que a tus entrenamientos en el gym y tus clases de boxeo?", c: "Sí, te amo más que a todo ❤️", t: "El ejercicio y el boxeo son primero" },
+            { q: "¿Me amas más que a una hamburguesa doble con queso?", c: "Sí, aunque me duela admitirlo 🍔❤️", t: "Nadie supera a una hamburguesa" },
+            { q: "¿Me amas más que a pasarte un nivel difícil en Geometry Dash?", c: "Sí, tú eres más importante ❤️", t: "Prefiero el Geometry Dash" },
+            { q: "¿Me amas más que a tu relación de amor-odio con Dragon Ball Legends?", c: "Sí, incluso más que ganar un PvP ❤️", t: "El PvP de Legends me importa más" },
+            { q: "Examen de memoria: ¿Te acuerdas de la fecha exacta de nuestro aniversario?", c: "4 de noviembre ❤️", t: "No me acuerdo / ¿Era en noviembre?" },
+            { q: "Prueba de oro: ¿Cómo iba vestido exactamente en nuestra primera cita?", c: "Camisa negra, pantalón azul y zapatos negros ❤️", t: "No me acuerdo / Otra combinación" },
+            { q: "Última pregunta trampa: ¿Admites formalmente que soy el mejor novio del universo mundial?", c: "Sí, oficialmente eres el mejor novio del universo mundial 👑❤️", t: "Lo estoy dudando..." },
+            { q: "¿Me cambiarías por un millón de dólares?", c: "Jamás, ni por todo el dinero del mundo ❤️", t: "Obviamente sí, ¿dónde firmo? 💰" },
+            { q: "Si tuvieras que elegir entre un día entero conmigo o un día entero haciendo lo que quieras, ¿qué eliges?", c: "Un día entero contigo 🥺", t: "Mi día libre obviamente 😎" },
+            { q: "Si pudieras revivir un momento conmigo infinitas veces, ¿lo harías?", c: "Sí, porque contigo todo es mejor ❤️", t: "Prefiero avanzar la historia 😭" },
+            { q: "Si apareciera un famoso que te gusta y te pidiera salir, ¿me dejarías por él/ella?", c: "No, porque ya tengo al amor de mi vida 😌", t: "Depende de quién sea 👀" },
+            { q: "Si solo pudieras salvar una cosa: ¿nuestros recuerdos o tu colección favorita?", c: "Nuestros recuerdos 🥹", t: "Mi colección, los recuerdos se pueden hacer de nuevo 💀" },
+            { q: "Si mañana me convirtiera en un gusano, ¿seguirías conmigo? 🪱", c: "Sí, porque seguirías siendo tú ❤️", t: "¿Un gusano? Qué asco, siguiente pregunta." },
+            { q: "Si tuvieras que pasar 24 horas abrazándome o 24 horas sin verme pero con WiFi ilimitado, ¿qué eliges?", c: "24 horas abrazándote 🫂", t: "Dame el WiFi 😭📶" },
+            { q: "Si solo pudieras recibir un regalo: uno mío o uno de tu tienda favorita, ¿cuál eliges?", c: "El tuyo ❤️", t: "La tienda, porque puedo comprarme más cosas." },
+            { q: "Si perdiéramos todos nuestros chats y fotos, ¿seguirías queriendo estar conmigo?", c: "Sí, porque lo importante eres tú ❤️", t: "Sin fotos ni chats no hay pruebas de nada 🗿" },
+            { q: "¿Me defenderías si alguien dijera que soy un mal novio?", c: "Sí, porque sé que eres el mejor 😤❤️", t: "Bueno... tendría que investigar primero." },
+            { q: "Si tuvieras que elegir entre besarme o recibir $10.000.000, ¿qué eliges? 💋💰", c: "Besarte 😘", t: "¿Y dónde tengo que poner mi cuenta bancaria?" },
+            { q: "Si pudieras eliminar una cosa de nuestra relación, ¿me eliminarías a mí?", c: "No, jamás ❤️", t: "Tengo algunas sugerencias... 💀" },
+            { q: "Si yo fuera un personaje desbloqueable de un videojuego, ¿me desbloquearías inmediatamente? 🎮", c: "Sí, eres legendario ❤️", t: "Esperaría a que estuvieras en oferta." },
+            { q: "¿Aceptarías pasar un mes entero sin salir de fiesta si eso significara pasar el mes conmigo?", c: "Sí, porque prefiero estar contigo 🥰", t: "Un mes es demasiado, tampoco abuses." },
+            { q: "Si tuvieras que elegir entre dormir ocho horas perfectas o dormir cinco horas pero abrazada a mí, ¿qué eliges?", c: "Cinco horas contigo 🥺", t: "OCHO HORAS. El sueño es sagrado. 😴" },
+            { q: "Si mañana me hago famoso y tengo millones de seguidores, ¿seguirías diciendo que soy tu novio?", c: "Sí, presumiría que eres mi novio 😌❤️", t: "Depende de cuánto me paguen por ser tu novia." },
+            { q: "Si tuvieras que elegir entre tener razón siempre o que yo tenga razón siempre, ¿qué eliges?", c: "Que tú tengas razón 😇", t: "Yo nací para tener razón." },
+            { q: "Si alguien te ofreciera cambiar nuestra historia por una vida perfecta sin mí, ¿aceptarías?", c: "No, prefiero nuestra historia ❤️", t: "¿Perfecta dices? Mándame el contrato." },
+            { q: "Si pudieras borrar una sola frase que hayas dicho durante nuestra relación, ¿sería \"te amo\"?", c: "No, jamás ❤️", t: "Tengo una lista de frases que quiero borrar..." },
+            { q: "Pregunta definitiva: Si tuvieras que describirme con una sola palabra, ¿cuál sería?", c: "El amor de mi vida ❤️", t: "Molesto. 💀" }
+        ];
+
+        let currentQuestionIndex = 0;
+        let correctAnswerText = "";
+
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const errorScreen = document.getElementById('error-screen');
+        const finalScreen = document.getElementById('final-screen');
+        const questionNumberElem = document.getElementById('question-number');
+        const questionTextElem = document.getElementById('question-text');
+        const option1Btn = document.getElementById('option1');
+        const option2Btn = document.getElementById('option2');
+
+        window.onload = function() {
+            quizScreen.style.display = 'none';
+        };
+
+        function startQuiz() {
+            welcomeScreen.style.display = 'none';
+            quizScreen.style.display = 'block';
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const currentData = questionsData[currentQuestionIndex];
+            questionNumberElem.textContent = `Pregunta ${currentQuestionIndex + 1} de ${questionsData.length}`;
+            questionTextElem.textContent = currentData.q;
+            correctAnswerText = currentData.c;
+
+            if (Math.random() > 0.5) {
+                option1Btn.textContent = currentData.c;
+                option2Btn.textContent = currentData.t;
+            } else {
+                option1Btn.textContent = currentData.t;
+                option2Btn.textContent = currentData.c;
+            }
+        }
+
+        function checkAnswer(selectedButton) {
+            if (selectedButton.textContent === correctAnswerText) {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questionsData.length) {
+                    showQuestion();
+                } else {
+                    quizScreen.style.display = 'none';
+                    finalScreen.style.display = 'block';
+                }
+            } else {
+                quizScreen.style.display = 'none';
+                errorScreen.style.display = 'block';
+            }
+        }
+
+        function retryQuestion() {
+            errorScreen.style.display = 'none';
+            quizScreen.style.display = 'block';
+            showQuestion();
+        }
+    </script>
+</body>
+</html>
